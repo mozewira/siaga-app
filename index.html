@@ -20,15 +20,15 @@
     <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <!-- Ikon Modern & Elegan untuk Si PANTAU -->
                 <div class="bg-emerald-700 p-2.5 rounded-xl border border-emerald-600 shadow-inner flex items-center justify-center">
                     <svg class="w-6 h-6 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base sm:text-lg tracking-wide leading-tight">SI PANTAU DESA</h1>
-                    <p class="text-xs text-emerald-200">Kecamatan Ngablak — Kabupaten Magelang</p>
+                    <!-- Header Dinamis: Disederhanakan jika sudah login, lengkap jika di halaman depan -->
+                    <h1 class="font-bold text-base sm:text-lg tracking-wide leading-tight" x-text="currentUser ? 'SI PANTAU DESA' : 'SI PANTAU DESA'"></h1>
+                    <p class="text-xs text-emerald-200" x-text="currentUser ? 'Kecamatan Ngablak' : 'Kecamatan Ngablak — Kabupaten Magelang'"></p>
                 </div>
             </div>
             <div>
@@ -406,7 +406,7 @@
 
     <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-8 text-center text-xs text-slate-500">
-        <p>Si PANTAU Desa — Pemerintah Kecamatan Ngablak Kabupaten Magelang</p>
+        <p>Si PANTAU Desa — Pemerintah Kecamatan Ngablak</p>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
@@ -547,7 +547,7 @@
                         });
 
                         if (res.ok) {
-                            alert('Kata sandi berhasil diperbarui!');
+                            alert('Kata sandi berhasil diperbarui secara online!');
                             this.newPassword = '';
                             this.showChangePasswordModal = false;
                             await this.fetchAllData();
