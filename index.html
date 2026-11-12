@@ -543,7 +543,7 @@
 
                         const res = await fetch(API_URL, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 'Content-Type': 'text/plain' },
                             body: JSON.stringify(payload)
                         });
 
@@ -578,7 +578,7 @@
 
                             await fetch(API_URL, {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: { 'Content-Type': 'text/plain' },
                                 body: JSON.stringify(payload)
                             });
 
@@ -614,8 +614,8 @@ async submitReport() {
                     this.isLoading = true; this.loadingText = 'Mengirim Laporan ke Database...';
                     const payload = { data: [{ desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek), tanggal: this.reportForm.exactDate, ringkasan: this.reportForm.summary, pdf_url: this.reportForm.pdfData || '', foto_url: this.reportForm.fotoData || '' }] };
                     try {
-                       try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek) }) }); } catch (e) { console.log('Delete lama dilewati.', e); }
-                        const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                       try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'delete', desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek) }) }); } catch (e) { console.log('Delete lama dilewati.', e); }
+                        const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
                         if (response.ok) { alert('Laporan berhasil tersimpan ke Database Online!'); await this.fetchAllData(); } else { const errText = await response.text(); alert('Gagal menyimpan. Server bilang: ' + errText); }
                     } catch (error) { alert('Terjadi kesalahan jaringan / CORS. Coba refresh dan ulangi lagi.'); } finally { this.isLoading = false; }
                 },
