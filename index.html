@@ -413,8 +413,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxNr9guIxLiE9ATLk3RqUtINM_p2bH7XWTS7YgSAYi-DmFQENTwM0xRKjiwTIbzDLMpTA/exec";
-
+        const API_URL = "https://script.google.com/macros/s/AKfycbyoZ7Li7sLhpaBfOy-GqyOsSr65QdLSTMLH4OJb7RGilA1mZV3SHoarY7UDvsdCllSikw/exec";
         const VILLAGES = [
             "Bandungrejo", "Genikan", "Girirejo", "Jogonayan", "Jogoyasan", 
             "Kanigoro", "Keditan", "Madyogondo", "Magersari", "Ngablak", 
@@ -615,10 +614,10 @@ async submitReport() {
                     this.isLoading = true; this.loadingText = 'Mengirim Laporan ke Database...';
                     const payload = { data: [{ desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek), tanggal: this.reportForm.exactDate, ringkasan: this.reportForm.summary, pdf_url: this.reportForm.pdfData || '', foto_url: this.reportForm.fotoData || '' }] };
                     try {
-                        try { await fetch(`${API_URL}/desa/${encodeURIComponent(this.currentUser.name)}?bulan=${this.selectedMonth}&tahun=${this.selectedYear}&minggu=${this.selectedWeek}`, { method: 'DELETE' }); } catch (e) { console.log('Delete lama dilewati:', e); }
+                       try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek) }) }); } catch (e) { console.log('Delete lama dilewati.', e); }
                         const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        if (response.ok) { alert('Laporan berhasil tersimpan ke Database Online!'); await this.fetchAllData(); } else { const errText = await response.text(); alert('Gagal menyimpan. SheetDB bilang: ' + errText); }
-                    } catch (error) { alert('Terjadi kesalahan jaringan / CORS. Cek Allowed Domains di SheetDB untuk domain sipantau-desa.my.id'); } finally { this.isLoading = false; }
+                        if (response.ok) { alert('Laporan berhasil tersimpan ke Database Online!'); await this.fetchAllData(); } else { const errText = await response.text(); alert('Gagal menyimpan. Server bilang: ' + errText); }
+                    } catch (error) { alert('Terjadi kesalahan jaringan / CORS. Coba refresh dan ulangi lagi.'); } finally { this.isLoading = false; }
                 },
 
                 async deleteWholeWeekReport() {
