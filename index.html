@@ -706,7 +706,7 @@ getDriveId(url) {
                     if (!url) return '#';
                     const id = this.getDriveId(url);
                     if (!id) return String(url).trim();
-                    return 'https://lh3.googleusercontent.com/d/' + id;
+                    return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1000';
                 },
 
                 filteredVillages() {
