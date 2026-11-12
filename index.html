@@ -653,7 +653,7 @@ async submitReport() {
   let m = url.match(/\/d\/([^\/\?]+)/);
   if (!m) m = url.match(/[?&]id=([^&]+)/);
   if (!m) return url;
-  return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+  return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1200';
 },
 formatDriveLink(url) {
   if (!url) return '#';
