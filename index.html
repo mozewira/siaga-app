@@ -606,50 +606,17 @@
                     }
                 },
 
-                async submitReport() {
-                    if (!this.reportForm.summary) {
-                        alert('Notulensi rapat wajib diisi.');
-                        return;
-                    }
-
-                    this.isLoading = true;
-                    this.loadingText = 'Mengirim Laporan ke Database...';
-
-                    await fetch(`${API_URL}/desa/${encodeURIComponent(this.currentUser.name)}?bulan=${this.selectedMonth}&tahun=${this.selectedYear}&minggu=${this.selectedWeek}`, {
-                        method: 'DELETE'
-                    });
-
-                    const payload = {
-                        data: [{
-                            desa: this.currentUser.name,
-                            bulan: this.selectedMonth,
-                            tahun: String(this.selectedYear),
-                            minggu: String(this.selectedWeek),
-                            tanggal: this.reportForm.exactDate,
-                            ringkasan: this.reportForm.summary,
-                            pdf_url: this.reportForm.pdfData || '',
-                            foto_url: this.reportForm.fotoData || ''
-                        }]
-                    };
-
+async submitReport() {
+                    if (!this.reportForm.summary) { alert('Notulensi rapat wajib diisi.'); return; }
+                    this.reportForm.pdfData = this.normalizeDriveLink(this.reportForm.pdfData);
+                    this.reportForm.fotoData = this.normalizeDriveLink(this.reportForm.fotoData);
+                    this.isLoading = true; this.loadingText = 'Mengirim Laporan ke Database...';
+                    const payload = { data: [{ desa: this.currentUser.name, bulan: this.selectedMonth, tahun: String(this.selectedYear), minggu: String(this.selectedWeek), tanggal: this.reportForm.exactDate, ringkasan: this.reportForm.summary, pdf_url: this.reportForm.pdfData || '', foto_url: this.reportForm.fotoData || '' }] };
                     try {
-                        const response = await fetch(API_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (response.ok) {
-                            alert('Laporan berhasil tersimpan ke Database Online!');
-                            await this.fetchAllData();
-                        } else {
-                            alert('Gagal menyimpan laporan.');
-                        }
-                    } catch (error) {
-                        alert('Terjadi kesalahan jaringan.');
-                    } finally {
-                        this.isLoading = false;
-                    }
+                        try { await fetch(`${API_URL}/desa/${encodeURIComponent(this.currentUser.name)}?bulan=${this.selectedMonth}&tahun=${this.selectedYear}&minggu=${this.selectedWeek}`, { method: 'DELETE' }); } catch (e) { console.log('Delete lama dilewati:', e); }
+                        const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if (response.ok) { alert('Laporan berhasil tersimpan ke Database Online!'); await this.fetchAllData(); } else { const errText = await response.text(); alert('Gagal menyimpan. SheetDB bilang: ' + errText); }
+                    } catch (error) { alert('Terjadi kesalahan jaringan / CORS. Cek Allowed Domains di SheetDB untuk domain sipantau-desa.my.id'); } finally { this.isLoading = false; }
                 },
 
                 async deleteWholeWeekReport() {
@@ -696,9 +663,34 @@
                     ).length;
                 },
 
-                formatDriveLink(url) {
+getDriveId(url) {
+                    if (!url) return null;
+                    url = String(url).trim();
+                    let m = url.match(/\/d\/([^\/\?&#]+)/);
+                    if (m) return m[1];
+                    m = url.match(/[?&]id=([^&#]+)/);
+                    if (m) return m[1];
+                    return null;
+                },
+                normalizeDriveLink(url) {
+                    if (!url) return '';
+                    url = String(url).trim();
+                    const id = this.getDriveId(url);
+                    if (id) return 'https://drive.google.com/file/d/' + id + '/view';
+                    return url;
+                },
+                formatDriveLink(url) { return this.normalizeDriveLink(url) || '#'; },
+                getPreviewUrl(url) {
                     if (!url) return '#';
-                    return url.trim();
+                    const id = this.getDriveId(url);
+                    if (!id) return String(url).trim();
+                    return 'https://drive.google.com/file/d/' + id + '/preview';
+                },
+                getImageUrl(url) {
+                    if (!url) return '#';
+                    const id = this.getDriveId(url);
+                    if (!id) return String(url).trim();
+                    return 'https://drive.google.com/uc?export=view&id=' + id;
                 },
 
                 filteredVillages() {
